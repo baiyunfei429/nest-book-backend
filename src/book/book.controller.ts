@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { BookService } from './book.service.js';
 import { CreateBookDto } from './dto/create-book.dto.js';
 import { UpdateBookDto } from './dto/update-book.dto.js';
@@ -19,7 +19,7 @@ export class BookController {
     },
     fileFilter(req, file, callback) {
       const extname = path.extname(file.originalname);
-      if(['.png', '.jpg', '.gif'].includes(extname)) {
+      if(['.png', '.jpg', '.jpeg', '.gif'].includes(extname)) {
         callback(null, true);
       } else {
         callback(new BadRequestException('只能上传图片'), false);
@@ -30,10 +30,10 @@ export class BookController {
     console.log('file', file);
     return file.path;
   }
-  
+
   @Get('list')
-  async list() {
-    return this.bookService.list();
+  async list(@Query('name') name: string) {
+    return this.bookService.list(name);
   }
 
   @Get(':id')
